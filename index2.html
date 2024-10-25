@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integración por Partes</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.min.js"></script>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #000000; 
+            color: #006eff; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px; 
+        }
+        .calculator { 
+            border: 1px solid #ccc; 
+            padding: 20px; 
+            border-radius: 10px; 
+            width: 100%; 
+            max-width: 500px; 
+            background: #fff; 
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
+        }
+        .calculator input, .calculator select, .calculator button { 
+            width: 100%; 
+            padding: 10px; 
+            margin: 5px 0; 
+            border-radius: 5px; 
+            border: 1px solid #cccccc; 
+            font-size: 1em; 
+        }
+        .result, .steps { 
+            margin-top: 15px; 
+            padding: 10px; 
+            border-radius: 5px; 
+            white-space: pre-wrap;
+        }
+        .result {
+            font-weight: bold;
+            color: #0051ff;
+            background-color: #ebf4ff;
+        }
+        .steps {
+            background-color: #f8f9fa;
+            font-family: monospace;
+        }
+        .formula {
+            background-color: #e5e7eb;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Integración por Partes</h1>
+    <div class="calculator">
+        <div class="formula">
+            ∫u·dv = u·v - ∫v·du
+        </div>
+        
+        <label for="integration-type">Tipo de integración:</label>
+        <select id="integration-type">
+            <option value="xexp">x·e^x</option>
+            <option value="xsin">x·sin(x)</option>
+            <option value="xcos">x·cos(x)</option>
+            <option value="lnx">ln(x)</option>
+            <option value="xln">x·ln(x)</option>
+        </select>
+
+        <label for="coefficient">Coeficiente:</label>
+        <input type="number" id="coefficient" value="1" step="any">
+        
+        <button onclick="calculateByParts()">Calcular Integral</button>
+        <div class="result" id="result-output"></div>
+        <div class="steps" id="steps-output"></div>
+    </div>
+
+    <script>
+        function calculateByParts() {
+            const type = document.getElementById("integration-type").value;
+            const coefficient = parseFloat(document.getElementById("coefficient").value) || 1;
+            
+            let result = "";
+            let steps = "Pasos de resolución:\n\n";
+            
+            try {
+                switch(type) {
+                    case "xexp":
+                        // ∫x·e^x dx
+                        steps += "1. Elegimos:\n";
+                        steps += "   u = x\n";
+                        steps += "   dv = e^x dx\n\n";
+                        steps += "2. Entonces:\n";
+                        steps += "   du = dx\n";
+                        steps += "   v = e^x\n\n";
+                        steps += "3. Aplicando la fórmula:\n";
+                        steps += "   ∫x·e^x dx = x·e^x - ∫e^x dx\n";
+                        steps += "   = x·e^x - e^x + C\n";
+                        result = `${coefficient}(x·e^x - e^x) + C`;
+                        break;
+
+                    case "xsin":
+                        // ∫x·sin(x) dx
+                        steps += "1. Elegimos:\n";
+                        steps += "   u = x\n";
+                        steps += "   dv = sin(x) dx\n\n";
+                        steps += "2. Entonces:\n";
+                        steps += "   du = dx\n";
+                        steps += "   v = -cos(x)\n\n";
+                        steps += "3. Aplicando la fórmula:\n";
+                        steps += "   ∫x·sin(x) dx = -x·cos(x) - ∫(-cos(x)) dx\n";
+                        steps += "   = -x·cos(x) + sin(x) + C\n";
+                        result = `${coefficient}(-x·cos(x) + sin(x)) + C`;
+                        break;
+
+                    case "xcos":
+                        // ∫x·cos(x) dx
+                        steps += "1. Elegimos:\n";
+                        steps += "   u = x\n";
+                        steps += "   dv = cos(x) dx\n\n";
+                        steps += "2. Entonces:\n";
+                        steps += "   du = dx\n";
+                        steps += "   v = sin(x)\n\n";
+                        steps += "3. Aplicando la fórmula:\n";
+                        steps += "   ∫x·cos(x) dx = x·sin(x) - ∫sin(x) dx\n";
+                        steps += "   = x·sin(x) + cos(x) + C\n";
+                        result = `${coefficient}(x·sin(x) + cos(x)) + C`;
+                        break;
+
+                    case "lnx":
+                        // ∫ln(x) dx
+                        steps += "1. Elegimos:\n";
+                        steps += "   u = ln(x)\n";
+                        steps += "   dv = dx\n\n";
+                        steps += "2. Entonces:\n";
+                        steps += "   du = 1/x dx\n";
+                        steps += "   v = x\n\n";
+                        steps += "3. Aplicando la fórmula:\n";
+                        steps += "   ∫ln(x) dx = x·ln(x) - ∫x·(1/x) dx\n";
+                        steps += "   = x·ln(x) - x + C\n";
+                        result = `${coefficient}(x·ln(x) - x) + C`;
+                        break;
+
+                    case "xln":
+                        // ∫x·ln(x) dx
+                        steps += "1. Elegimos:\n";
+                        steps += "   u = ln(x)\n";
+                        steps += "   dv = x dx\n\n";
+                        steps += "2. Entonces:\n";
+                        steps += "   du = 1/x dx\n";
+                        steps += "   v = x²/2\n\n";
+                        steps += "3. Aplicando la fórmula:\n";
+                        steps += "   ∫x·ln(x) dx = (x²/2)·ln(x) - ∫(x²/2)·(1/x) dx\n";
+                        steps += "   = (x²/2)·ln(x) - ∫(x/2) dx\n";
+                        steps += "   = (x²/2)·ln(x) - x²/4 + C\n";
+                        result = `${coefficient}((x²/2)·ln(x) - x²/4) + C`;
+                        break;
+                }
+                
+                document.getElementById("result-output").innerHTML = `Resultado:\n${result}`;
+                document.getElementById("steps-output").innerHTML = steps;
+            } catch (error) {
+                document.getElementById("result-output").innerHTML = "Error en el cálculo. Por favor verifica los valores ingresados.";
+                document.getElementById("steps-output").innerHTML = "";
+            }
+        }
+    </script>
+</body>
+</html>
